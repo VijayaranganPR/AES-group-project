@@ -77,11 +77,11 @@ P_combined3 = [ones(size(s_scaled)), 1 ./ s_scaled, 1 ./ (s_scaled.^2), 1 ./ (s_
 % Calculate the least squares solution for both models
 % Combined model
 c_combined = (P_combined' * P_combined) \ (P_combined' * V);
-% c_combined = round(c_combined, 4); % Round to 4 decimal places
+c_combined = round(c_combined, 4); % Round to 4 decimal places
 
 % Combined+3 model
 c_combined3 = (P_combined3' * P_combined3) \ (P_combined3' * V);
-% c_combined3 = round(c_combined3, 4); % Round to 4 decimal places
+c_combined3 = round(c_combined3, 4); % Round to 4 decimal places
 
 disp('**********************Question 3**********************')
 % Display the parameters
@@ -136,10 +136,7 @@ fprintf('Root-Mean Square Error (RMS): %.4f V\n', RMS_combined3);
 % Define SOC range from 0 to 1 with a step of 0.01
 s_raw = (0:0.01:1);
 s = epsilon + (1 - 2 * epsilon) * s_raw; 
-% for combined model
-% k = c_combined;
-% V_combined =  k(1) + k(2)./s+ k(3) .* s+ k(4) .* log(s)+ k(5) .* log(1 - s);
-k = c_combined3; % replace with your array values
+k = c_combined3;
 
 % Combined+3 Model Calculation using the array values
 V_combined3 = k(1) + k(2)./s + k(3)./s.^2 + k(4)./s.^3 + k(5)./s.^4 + ...
@@ -147,7 +144,6 @@ V_combined3 = k(1) + k(2)./s + k(3)./s.^2 + k(4)./s.^3 + k(5)./s.^4 + ...
 
 % Plot the Combined+3 Model
 figure; hold on; box on;
-% plot(s, V_combined, 'b-', 'LineWidth', 2);
 plot(s_raw, V_combined3, 'r-', 'LineWidth', 2);
 
 
@@ -186,6 +182,7 @@ SOC_at_3_8V = interp1(V_combined3, s_raw, target_OCV_3_8V, 'linear');
 fprintf('SOC at %.4fV with 1A discharge: %.4f\n', target_OCV_3_8V, SOC_at_3_8V);
 
 
+
 % **********************Question 7**********************
 % from question 4
 fprintf('\n*********Question 7a*********\n')
@@ -218,11 +215,4 @@ target_OCV_3_8V = Vo_OCV_3_8V - discharge_current6c * Reff;
 SOC_at_3_8V = interp1(V_combined3_hat_unique, SOC_unique, target_OCV_3_8V, 'linear');
 
 fprintf('SOC at %.4fV with 1A discharge: %.4f\n', target_OCV_3_8V, SOC_at_3_8V);
-
-
-function [OCV] = findOCV(k, s, eps)
-    s = eps + (1 - 2 * eps) * s;
-    OCV = k(1) + k(2)./s + k(3)./s.^2 + k(4)./s.^3 + k(5)./s.^4 + ...
-       k(6) * s + k(7) * log(s) + k(8) * log(1 - s);
-end
 
